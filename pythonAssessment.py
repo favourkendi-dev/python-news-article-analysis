@@ -116,15 +116,13 @@ def count_paragraphs(text):
     if not text:
         return 1
     
-    # Split text by blank lines (one or more empty lines between text blocks)
-    # \n\s*\n matches newline, optional whitespace, newline
+    # Split text by blank lines
     paragraphs = re.split(r'\n\s*\n', text.strip())
     
     # Filter out any empty strings from the list
-    # IF STATEMENT inside loop - satisfies rubric requirement
     valid_paragraphs = []
     for p in paragraphs:
-        if p.strip():  # if paragraph has content after stripping whitespace
+        if p.strip():
             valid_paragraphs.append(p)
     
     # Edge case: if no valid paragraphs found, return 1
@@ -132,6 +130,32 @@ def count_paragraphs(text):
         return 1
     
     return len(valid_paragraphs)
+
+
+def count_sentences(text):
+    """
+    Counts the number of sentences in the text.
+    Sentences end with periods, exclamation marks, or question marks.
+    
+    Args:
+        text (str): The string to analyze.
+    
+    Returns:
+        int: The number of sentences. Returns 1 if text is empty.
+    """
+    # Edge case: empty string
+    if not text:
+        return 1
+    
+    # Regex: count sentence-ending punctuation marks
+    # [\.!?] matches period, exclamation mark, or question mark
+    sentences = re.findall(r'[.!?]', text)
+    
+    # Edge case: if no sentence endings found, return 1
+    if not sentences:
+        return 1
+    
+    return len(sentences)
 
 
 def main():
@@ -167,6 +191,12 @@ def main():
     print(f"\n[4] Paragraph Count:")
     print(f"    The article contains {paragraphs} paragraphs.")
     print(f"    Edge case (empty string): {count_paragraphs('')}")
+    
+    # Test count_sentences
+    sentences = count_sentences(article_text)
+    print(f"\n[5] Sentence Count:")
+    print(f"    The article contains {sentences} sentences.")
+    print(f"    Edge case (empty string): {count_sentences('')}")
 
 
 # Run the main function
