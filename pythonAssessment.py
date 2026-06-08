@@ -12,6 +12,7 @@ This script performs various text analysis tasks on a given news article:
 - Reading time estimate (EXTRA FEATURE 3)
 - Longest and shortest words (EXTRA FEATURE 4)
 - Export results to file (EXTRA FEATURE 5)
+- Keyword density percentage (EXTRA FEATURE 6)
 - Calculate average word length
 - Count paragraphs
 - Count sentences
@@ -209,7 +210,6 @@ def export_analysis_to_file(text, filename="analysis_results.txt"):
         bool: True if export successful, False otherwise.
     """
     try:
-        # Gather all analysis data
         most_common = identify_most_common_word(text)
         top_5 = get_top_5_words(text)
         unique_count = count_unique_words(text)
@@ -220,7 +220,6 @@ def export_analysis_to_file(text, filename="analysis_results.txt"):
         paragraphs = count_paragraphs(text)
         sentences = count_sentences(text)
         
-        # Build report content
         report_lines = []
         report_lines.append("=" * 60)
         report_lines.append("NEWS ARTICLE ANALYSIS REPORT")
@@ -254,7 +253,6 @@ def export_analysis_to_file(text, filename="analysis_results.txt"):
         report_lines.append("End of Report")
         report_lines.append("=" * 60)
         
-        # Write to file
         with open(filename, "w", encoding="utf-8") as file:
             file.write("\n".join(report_lines))
         
@@ -263,6 +261,40 @@ def export_analysis_to_file(text, filename="analysis_results.txt"):
     except Exception as e:
         print(f"Error exporting analysis: {e}")
         return False
+# =======================================================
+
+
+# ==================== EXTRA FEATURE 6 ====================
+def calculate_keyword_density(text, word):
+    """
+    EXTRA FEATURE: Calculates the keyword density percentage.
+    Shows what percentage of total words the searched word represents.
+    
+    Args:
+        text (str): The string to analyze.
+        word (str): The keyword to calculate density for.
+    
+    Returns:
+        float: Keyword density as a percentage. Returns 0.0 if invalid.
+    """
+    # Edge case: empty inputs
+    if not text or not word:
+        return 0.0
+    
+    # Count occurrences of the keyword
+    keyword_count = count_specific_word(text, word)
+    
+    # Count total words in text
+    total_words = len(re.findall(r"\b[a-zA-Z']+\b", text.lower()))
+    
+    # Edge case: no words in text
+    if total_words == 0:
+        return 0.0
+    
+    # Calculate percentage
+    density = (keyword_count / total_words) * 100
+    
+    return float(density)
 # =======================================================
 
 
@@ -431,10 +463,11 @@ def main():
         print("  1. Search for a specific word")
         print("  2. View full article analysis")
         print("  3. Export analysis to file")
-        print("  4. Exit")
+        print("  4. Check keyword density")
+        print("  5. Exit")
         print("-" * 50)
         
-        choice = input("Enter your choice (1, 2, 3, or 4): ").strip()
+        choice = input("Enter your choice (1, 2, 3, 4, or 5): ").strip()
         
         if choice == "1":
             search_word = input("\nEnter the word you want to count: ").strip()
@@ -449,19 +482,32 @@ def main():
             display_full_analysis(article_text)
             
         elif choice == "3":
-            # EXTRA FEATURE 5: Export to file
             success = export_analysis_to_file(article_text)
             if success:
                 print("\nAnalysis exported successfully to 'analysis_results.txt'!")
             else:
                 print("\nFailed to export analysis. Please try again.")
-            
+        
         elif choice == "4":
+            # EXTRA FEATURE 6: Keyword density
+            keyword = input("\nEnter the keyword to check density: ").strip()
+            
+            if keyword:
+                density = calculate_keyword_density(article_text, keyword)
+                count = count_specific_word(article_text, keyword)
+                total = len(re.findall(r"\b[a-zA-Z']+\b", article_text.lower()))
+                print(f"\nKeyword Density Analysis for '{keyword}':")
+                print(f"    Appearances: {count} out of {total} total words")
+                print(f"    Density: {density:.2f}%")
+            else:
+                print("\nNo keyword entered. Please try again.")
+            
+        elif choice == "5":
             print("\nThank you for using News Article Analyzer. Goodbye!")
             keep_running = False
             
         else:
-            print("\nInvalid choice. Please enter 1, 2, 3, or 4.")
+            print("\nInvalid choice. Please enter 1, 2, 3, 4, or 5.")
 
 
 if __name__ == "__main__":
