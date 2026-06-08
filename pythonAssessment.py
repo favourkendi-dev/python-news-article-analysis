@@ -16,6 +16,7 @@ This script performs various text analysis tasks on a given news article:
 - Sentence average length (EXTRA FEATURE 7)
 - Character count with/without spaces (EXTRA FEATURE 8)
 - Character frequency analysis (EXTRA FEATURE 9)
+- Sentiment word detection (EXTRA FEATURE 10)
 - Calculate average word length
 - Count paragraphs
 - Count sentences
@@ -225,6 +226,7 @@ def export_analysis_to_file(text, filename="analysis_results.txt"):
         avg_sentence_length = calculate_sentence_average_length(text)
         char_with_spaces, char_without_spaces = count_characters(text)
         top_chars = get_top_characters(text)
+        sentiment = analyze_sentiment(text)
         
         report_lines = []
         report_lines.append("=" * 60)
@@ -264,6 +266,11 @@ def export_analysis_to_file(text, filename="analysis_results.txt"):
         if top_chars:
             for rank, (char, count) in enumerate(top_chars, 1):
                 report_lines.append(f"    {rank}. '{char}' - {count} times")
+        report_lines.append("")
+        report_lines.append("[SENTIMENT ANALYSIS]")
+        report_lines.append(f"Positive words found: {sentiment['positive_count']}")
+        report_lines.append(f"Negative words found: {sentiment['negative_count']}")
+        report_lines.append(f"Overall sentiment: {sentiment['overall']}")
         report_lines.append("")
         report_lines.append("=" * 60)
         report_lines.append("End of Report")
@@ -371,18 +378,14 @@ def get_top_characters(text, top_n=5):
         list: A list of tuples (character, count) for top N characters.
               Returns empty list if text is empty.
     """
-    # Edge case: empty string
     if not text:
         return []
     
-    # Filter only alphabetic characters and convert to lowercase
     letters = re.findall(r'[a-zA-Z]', text.lower())
     
-    # Edge case: no letters found
     if not letters:
         return []
     
-    # Count character frequencies
     char_counts = {}
     for char in letters:
         if char in char_counts:
@@ -390,10 +393,73 @@ def get_top_characters(text, top_n=5):
         else:
             char_counts[char] = 1
     
-    # Sort by frequency (highest first), then alphabetically
     sorted_chars = sorted(char_counts.items(), key=lambda x: (-x[1], x[0]))
     
     return sorted_chars[:top_n]
+# =======================================================
+
+
+# ==================== EXTRA FEATURE 10 ====================
+def analyze_sentiment(text):
+    """
+    EXTRA FEATURE: Basic sentiment analysis using positive/negative word lists.
+    Scans text for sentiment keywords and returns a summary.
+    
+    Args:
+        text (str): The string to analyze.
+    
+    Returns:
+        dict: Dictionary with positive_count, negative_count, and overall sentiment.
+    """
+    # Edge case: empty string
+    if not text:
+        return {"positive_count": 0, "negative_count": 0, "overall": "Neutral"}
+    
+    # Simple word lists for demonstration
+    positive_words = [
+        "good", "great", "excellent", "amazing", "wonderful", "fantastic",
+        "positive", "best", "love", "happy", "perfect", "outstanding",
+        "superb", "brilliant", "impressive", "remarkable", "revolutionary",
+        "innovative", "groundbreaking", "success", "benefit", "improve",
+        "better", "easy", "accessible", "quality", "consistent", "excellent",
+        "perfectly", "rich", "flavorful", "positive", "overwhelmingly",
+        "praise", "eager", "leap", "forward", "enhancing", "golden"
+    ]
+    
+    negative_words = [
+        "bad", "terrible", "awful", "horrible", "worst", "hate",
+        "negative", "poor", "difficult", "problem", "issue", "fail",
+        "wrong", "error", "bug", "crash", "slow", "expensive",
+        "hard", "complicated", "confusing", "disappointing", "sad",
+        "angry", "frustrated", "concern", "worry", "risk", "danger"
+    ]
+    
+    # Extract words from text
+    words = re.findall(r"\b[a-zA-Z']+\b", text.lower())
+    
+    # Count sentiment words
+    positive_count = 0
+    negative_count = 0
+    
+    for word in words:
+        if word in positive_words:
+            positive_count += 1
+        if word in negative_words:
+            negative_count += 1
+    
+    # Determine overall sentiment
+    if positive_count > negative_count:
+        overall = "Positive"
+    elif negative_count > positive_count:
+        overall = "Negative"
+    else:
+        overall = "Neutral"
+    
+    return {
+        "positive_count": positive_count,
+        "negative_count": negative_count,
+        "overall": overall
+    }
 # =======================================================
 
 
@@ -554,6 +620,13 @@ def display_full_analysis(text):
     else:
         print("    No characters found.")
     
+    # EXTRA FEATURE 10: Sentiment analysis
+    sentiment = analyze_sentiment(text)
+    print(f"\n[EXTRA 10] Sentiment Analysis:")
+    print(f"    Positive sentiment words: {sentiment['positive_count']}")
+    print(f"    Negative sentiment words: {sentiment['negative_count']}")
+    print(f"    Overall sentiment: {sentiment['overall']}")
+    
     print("\n" + "=" * 50)
 
 
@@ -583,10 +656,11 @@ def main():
         print("  2. View full article analysis")
         print("  3. Export analysis to file")
         print("  4. Check keyword density")
-        print("  5. Exit")
+        print("  5. Run sentiment analysis")
+        print("  6. Exit")
         print("-" * 50)
         
-        choice = input("Enter your choice (1, 2, 3, 4, or 5): ").strip()
+        choice = input("Enter your choice (1, 2, 3, 4, 5, or 6): ").strip()
         
         if choice == "1":
             search_word = input("\nEnter the word you want to count: ").strip()
@@ -619,13 +693,24 @@ def main():
                 print(f"    Density: {density:.2f}%")
             else:
                 print("\nNo keyword entered. Please try again.")
-            
+        
         elif choice == "5":
+            # EXTRA FEATURE 10: Standalone sentiment analysis
+            sentiment = analyze_sentiment(article_text)
+            print("\n" + "-" * 40)
+            print("SENTIMENT ANALYSIS RESULTS")
+            print("-" * 40)
+            print(f"Positive words found: {sentiment['positive_count']}")
+            print(f"Negative words found: {sentiment['negative_count']}")
+            print(f"Overall article sentiment: {sentiment['overall']}")
+            print("-" * 40)
+            
+        elif choice == "6":
             print("\nThank you for using News Article Analyzer. Goodbye!")
             keep_running = False
             
         else:
-            print("\nInvalid choice. Please enter 1, 2, 3, 4, or 5.")
+            print("\nInvalid choice. Please enter 1, 2, 3, 4, 5, or 6.")
 
 
 if __name__ == "__main__":
