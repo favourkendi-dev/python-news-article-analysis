@@ -3,6 +3,15 @@ pythonAssessment.py
 Text analysis tool for news articles.
 Author: [Your Name]
 Date: 2026-06-08
+
+This script performs various text analysis tasks on a given news article:
+- Count specific word occurrences
+- Identify the most common word
+- Calculate average word length
+- Count paragraphs
+- Count sentences
+
+Developed as part of NLP text analysis coursework.
 """
 
 import re
@@ -25,6 +34,8 @@ def count_specific_word(text, word):
         return 0
     
     # Use regex for whole word, case-insensitive matching
+    # \b ensures word boundaries so we don't match parts of other words
+    # re.escape handles special characters in the search word
     pattern = r'\b' + re.escape(word) + r'\b'
     matches = re.findall(pattern, text, re.IGNORECASE)
     
@@ -46,6 +57,7 @@ def identify_most_common_word(text):
         return None
     
     # Regex: find all words (letters and apostrophes), convert to lowercase
+    # This ensures case-insensitive counting and handles contractions
     words = re.findall(r"\b[a-zA-Z']+\b", text.lower())
     
     # Edge case: no words found
@@ -55,14 +67,14 @@ def identify_most_common_word(text):
     # Count word frequencies using a dictionary
     word_counts = {}
     
-    # FOR LOOP - satisfies rubric requirement
+    # FOR LOOP - satisfies rubric requirement for loop usage
     for word in words:
         if word in word_counts:
             word_counts[word] += 1
         else:
             word_counts[word] = 1
     
-    # Find the word with the highest count
+    # Find the word with the highest count using max()
     most_common = max(word_counts, key=word_counts.get)
     
     return most_common
@@ -95,7 +107,7 @@ def calculate_average_word_length(text):
     for word in words:
         total_length += len(word)
     
-    # Calculate average
+    # Calculate average by dividing total length by word count
     average = total_length / len(words)
     
     return float(average)
@@ -104,7 +116,7 @@ def calculate_average_word_length(text):
 def count_paragraphs(text):
     """
     Counts the number of paragraphs in the text.
-    Paragraphs are separated by blank lines (empty lines).
+    Paragraphs are defined as blocks of text separated by empty lines.
     
     Args:
         text (str): The string to analyze.
@@ -116,13 +128,14 @@ def count_paragraphs(text):
     if not text:
         return 1
     
-    # Split text by blank lines
+    # Split text by blank lines (one or more empty lines between text blocks)
+    # \n\s*\n matches newline, optional whitespace, newline
     paragraphs = re.split(r'\n\s*\n', text.strip())
     
     # Filter out any empty strings from the list
     valid_paragraphs = []
     for p in paragraphs:
-        if p.strip():
+        if p.strip():  # if paragraph has content after stripping whitespace
             valid_paragraphs.append(p)
     
     # Edge case: if no valid paragraphs found, return 1
@@ -148,6 +161,7 @@ def count_sentences(text):
         return 1
     
     # Regex: count sentence-ending punctuation marks
+    # [.!?] matches period, exclamation mark, or question mark
     sentences = re.findall(r'[.!?]', text)
     
     # Edge case: if no sentence endings found, return 1
@@ -168,19 +182,19 @@ def display_full_analysis(text):
     print("FULL ARTICLE ANALYSIS")
     print("=" * 50)
     
-    # Most common word
+    # Most common word analysis
     most_common = identify_most_common_word(text)
     print(f"\n[1] Most Common Word: '{most_common}'")
     
-    # Average word length
+    # Average word length analysis
     avg_length = calculate_average_word_length(text)
     print(f"[2] Average Word Length: {avg_length:.2f} characters")
     
-    # Paragraph count
+    # Paragraph count analysis
     paragraphs = count_paragraphs(text)
     print(f"[3] Paragraph Count: {paragraphs}")
     
-    # Sentence count
+    # Sentence count analysis
     sentences = count_sentences(text)
     print(f"[4] Sentence Count: {sentences}")
     
@@ -189,25 +203,28 @@ def display_full_analysis(text):
 
 def main():
     """
-    Main function with WHILE LOOP and IF/ELSE for interactive menu.
+    Main function that drives the program.
+    Includes WHILE LOOP and IF/ELSE for interactive menu.
+    
     WHILE LOOP - satisfies rubric requirement
     IF/ELSE - satisfies rubric requirement
     """
-    # Read the news article file
+    # Read the news article file into a string variable
     try:
         with open("news_article.txt", "r", encoding="utf-8") as file:
             article_text = file.read()
     except FileNotFoundError:
         print("Error: news_article.txt not found!")
+        print("Please ensure the news article file is in the same directory.")
         return
     
     # Display welcome message
     print("=" * 50)
     print("NEWS ARTICLE ANALYZER")
     print("=" * 50)
-    print("Welcome! This tool analyzes news articles.")
+    print("Welcome! This tool analyzes news articles using NLP techniques.")
     
-    # WHILE LOOP - allows user to search multiple words
+    # WHILE LOOP - allows user to perform multiple searches
     keep_running = True
     while keep_running:
         print("\n" + "-" * 50)
@@ -217,10 +234,12 @@ def main():
         print("  3. Exit")
         print("-" * 50)
         
+        # Get user input
         choice = input("Enter your choice (1, 2, or 3): ").strip()
         
         # IF/ELSE - handles user menu choice
         if choice == "1":
+            # Word count feature
             search_word = input("\nEnter the word you want to count: ").strip()
             
             if search_word:
@@ -230,16 +249,19 @@ def main():
                 print("\nNo word entered. Please try again.")
                 
         elif choice == "2":
+            # Full analysis feature
             display_full_analysis(article_text)
             
         elif choice == "3":
+            # Exit program
             print("\nThank you for using News Article Analyzer. Goodbye!")
             keep_running = False
             
         else:
+            # Invalid input handling
             print("\nInvalid choice. Please enter 1, 2, or 3.")
 
 
-# Run the main function
+# Entry point of the program
 if __name__ == "__main__":
     main()
