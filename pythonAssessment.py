@@ -13,6 +13,7 @@ This script performs various text analysis tasks on a given news article:
 - Longest and shortest words (EXTRA FEATURE 4)
 - Export results to file (EXTRA FEATURE 5)
 - Keyword density percentage (EXTRA FEATURE 6)
+- Sentence average length (EXTRA FEATURE 7)
 - Calculate average word length
 - Count paragraphs
 - Count sentences
@@ -219,6 +220,7 @@ def export_analysis_to_file(text, filename="analysis_results.txt"):
         avg_length = calculate_average_word_length(text)
         paragraphs = count_paragraphs(text)
         sentences = count_sentences(text)
+        avg_sentence_length = calculate_sentence_average_length(text)
         
         report_lines = []
         report_lines.append("=" * 60)
@@ -249,6 +251,8 @@ def export_analysis_to_file(text, filename="analysis_results.txt"):
         report_lines.append(f"Longest Word: '{longest}' ({len(longest)} characters)")
         report_lines.append(f"Shortest Word: '{shortest}' ({len(shortest)} characters)")
         report_lines.append("")
+        report_lines.append(f"Average Sentence Length: {avg_sentence_length:.2f} words")
+        report_lines.append("")
         report_lines.append("=" * 60)
         report_lines.append("End of Report")
         report_lines.append("=" * 60)
@@ -277,24 +281,52 @@ def calculate_keyword_density(text, word):
     Returns:
         float: Keyword density as a percentage. Returns 0.0 if invalid.
     """
-    # Edge case: empty inputs
     if not text or not word:
         return 0.0
     
-    # Count occurrences of the keyword
     keyword_count = count_specific_word(text, word)
-    
-    # Count total words in text
     total_words = len(re.findall(r"\b[a-zA-Z']+\b", text.lower()))
     
-    # Edge case: no words in text
     if total_words == 0:
         return 0.0
     
-    # Calculate percentage
     density = (keyword_count / total_words) * 100
     
     return float(density)
+# =======================================================
+
+
+# ==================== EXTRA FEATURE 7 ====================
+def calculate_sentence_average_length(text):
+    """
+    EXTRA FEATURE: Calculates the average number of words per sentence.
+    
+    Args:
+        text (str): The string to analyze.
+    
+    Returns:
+        float: Average words per sentence. Returns 0.0 if invalid.
+    """
+    # Edge case: empty string
+    if not text:
+        return 0.0
+    
+    # Count total words
+    words = re.findall(r"\b[a-zA-Z']+\b", text.lower())
+    total_words = len(words)
+    
+    # Count sentences
+    sentence_count = count_sentences(text)
+    
+    # Edge case: no sentences or only 1 (empty string edge case returns 1)
+    # We need at least 1 real sentence to calculate average
+    if sentence_count <= 0:
+        return 0.0
+    
+    # Calculate average words per sentence
+    average = total_words / sentence_count
+    
+    return float(average)
 # =======================================================
 
 
@@ -435,6 +467,11 @@ def display_full_analysis(text):
     sentences = count_sentences(text)
     print(f"[4] Sentence Count: {sentences}")
     
+    # EXTRA FEATURE 7: Sentence average length
+    sentence_avg = calculate_sentence_average_length(text)
+    print(f"\n[EXTRA 7] Sentence Complexity:")
+    print(f"    Average words per sentence: {sentence_avg:.2f}")
+    
     print("\n" + "=" * 50)
 
 
@@ -489,7 +526,6 @@ def main():
                 print("\nFailed to export analysis. Please try again.")
         
         elif choice == "4":
-            # EXTRA FEATURE 6: Keyword density
             keyword = input("\nEnter the keyword to check density: ").strip()
             
             if keyword:
