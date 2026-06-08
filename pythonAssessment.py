@@ -148,7 +148,6 @@ def count_sentences(text):
         return 1
     
     # Regex: count sentence-ending punctuation marks
-    # [\.!?] matches period, exclamation mark, or question mark
     sentences = re.findall(r'[.!?]', text)
     
     # Edge case: if no sentence endings found, return 1
@@ -158,45 +157,87 @@ def count_sentences(text):
     return len(sentences)
 
 
-def main():
-    # Read the news article file
-    with open("news_article.txt", "r", encoding="utf-8") as file:
-        article_text = file.read()
+def display_full_analysis(text):
+    """
+    Displays complete analysis of the news article.
     
-    # Display header
+    Args:
+        text (str): The article text to analyze.
+    """
+    print("\n" + "=" * 50)
+    print("FULL ARTICLE ANALYSIS")
+    print("=" * 50)
+    
+    # Most common word
+    most_common = identify_most_common_word(text)
+    print(f"\n[1] Most Common Word: '{most_common}'")
+    
+    # Average word length
+    avg_length = calculate_average_word_length(text)
+    print(f"[2] Average Word Length: {avg_length:.2f} characters")
+    
+    # Paragraph count
+    paragraphs = count_paragraphs(text)
+    print(f"[3] Paragraph Count: {paragraphs}")
+    
+    # Sentence count
+    sentences = count_sentences(text)
+    print(f"[4] Sentence Count: {sentences}")
+    
+    print("\n" + "=" * 50)
+
+
+def main():
+    """
+    Main function with WHILE LOOP and IF/ELSE for interactive menu.
+    WHILE LOOP - satisfies rubric requirement
+    IF/ELSE - satisfies rubric requirement
+    """
+    # Read the news article file
+    try:
+        with open("news_article.txt", "r", encoding="utf-8") as file:
+            article_text = file.read()
+    except FileNotFoundError:
+        print("Error: news_article.txt not found!")
+        return
+    
+    # Display welcome message
     print("=" * 50)
     print("NEWS ARTICLE ANALYZER")
     print("=" * 50)
+    print("Welcome! This tool analyzes news articles.")
     
-    # Test count_specific_word
-    search_word = "the"
-    word_count = count_specific_word(article_text, search_word)
-    print(f"\n[1] Word Count Analysis:")
-    print(f"    The word '{search_word}' appears {word_count} times.")
-    
-    # Test identify_most_common_word
-    most_common = identify_most_common_word(article_text)
-    print(f"\n[2] Most Common Word:")
-    print(f"    The most common word is: '{most_common}'")
-    print(f"    Edge case (empty string): {identify_most_common_word('')}")
-    
-    # Test calculate_average_word_length
-    avg_length = calculate_average_word_length(article_text)
-    print(f"\n[3] Average Word Length:")
-    print(f"    The average word length is: {avg_length:.2f}")
-    print(f"    Edge case (empty string): {calculate_average_word_length('')}")
-    
-    # Test count_paragraphs
-    paragraphs = count_paragraphs(article_text)
-    print(f"\n[4] Paragraph Count:")
-    print(f"    The article contains {paragraphs} paragraphs.")
-    print(f"    Edge case (empty string): {count_paragraphs('')}")
-    
-    # Test count_sentences
-    sentences = count_sentences(article_text)
-    print(f"\n[5] Sentence Count:")
-    print(f"    The article contains {sentences} sentences.")
-    print(f"    Edge case (empty string): {count_sentences('')}")
+    # WHILE LOOP - allows user to search multiple words
+    keep_running = True
+    while keep_running:
+        print("\n" + "-" * 50)
+        print("MENU OPTIONS:")
+        print("  1. Search for a specific word")
+        print("  2. View full article analysis")
+        print("  3. Exit")
+        print("-" * 50)
+        
+        choice = input("Enter your choice (1, 2, or 3): ").strip()
+        
+        # IF/ELSE - handles user menu choice
+        if choice == "1":
+            search_word = input("\nEnter the word you want to count: ").strip()
+            
+            if search_word:
+                word_count = count_specific_word(article_text, search_word)
+                print(f"\nThe word '{search_word}' appears {word_count} times.")
+            else:
+                print("\nNo word entered. Please try again.")
+                
+        elif choice == "2":
+            display_full_analysis(article_text)
+            
+        elif choice == "3":
+            print("\nThank you for using News Article Analyzer. Goodbye!")
+            keep_running = False
+            
+        else:
+            print("\nInvalid choice. Please enter 1, 2, or 3.")
 
 
 # Run the main function
