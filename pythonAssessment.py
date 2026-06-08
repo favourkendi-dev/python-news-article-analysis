@@ -695,7 +695,6 @@ def main():
                 print("\nNo keyword entered. Please try again.")
         
         elif choice == "5":
-            # EXTRA FEATURE 10: Standalone sentiment analysis
             sentiment = analyze_sentiment(article_text)
             print("\n" + "-" * 40)
             print("SENTIMENT ANALYSIS RESULTS")
