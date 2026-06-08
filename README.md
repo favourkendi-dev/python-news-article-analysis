@@ -1,10 +1,6 @@
 # News Article Analyzer
 
- A Python-based Natural Language Processing (NLP) tool for comprehensive text analysis of news articles. Built as a portfolio-grade project for academic assessment.
-
-[![Python](https://img.shields.io/badge/Python-3.8%2B-blue?logo=python&logoColor=white)](https://www.python.org/)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![CodeGrade](https://img.shields.io/badge/Assessment-CodeGrade-orange)](https://codegrade.com/)
+&gt; A Python-based Natural Language Processing (NLP) tool for comprehensive text analysis of news articles. Built as a portfolio-grade project for academic assessment
 
 ---
 
