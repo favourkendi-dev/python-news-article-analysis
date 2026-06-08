@@ -14,6 +14,7 @@ This script performs various text analysis tasks on a given news article:
 - Export results to file (EXTRA FEATURE 5)
 - Keyword density percentage (EXTRA FEATURE 6)
 - Sentence average length (EXTRA FEATURE 7)
+- Character count with/without spaces (EXTRA FEATURE 8)
 - Calculate average word length
 - Count paragraphs
 - Count sentences
@@ -221,6 +222,7 @@ def export_analysis_to_file(text, filename="analysis_results.txt"):
         paragraphs = count_paragraphs(text)
         sentences = count_sentences(text)
         avg_sentence_length = calculate_sentence_average_length(text)
+        char_with_spaces, char_without_spaces = count_characters(text)
         
         report_lines = []
         report_lines.append("=" * 60)
@@ -252,6 +254,9 @@ def export_analysis_to_file(text, filename="analysis_results.txt"):
         report_lines.append(f"Shortest Word: '{shortest}' ({len(shortest)} characters)")
         report_lines.append("")
         report_lines.append(f"Average Sentence Length: {avg_sentence_length:.2f} words")
+        report_lines.append("")
+        report_lines.append(f"Characters (with spaces): {char_with_spaces}")
+        report_lines.append(f"Characters (without spaces): {char_without_spaces}")
         report_lines.append("")
         report_lines.append("=" * 60)
         report_lines.append("End of Report")
@@ -307,26 +312,46 @@ def calculate_sentence_average_length(text):
     Returns:
         float: Average words per sentence. Returns 0.0 if invalid.
     """
-    # Edge case: empty string
     if not text:
         return 0.0
     
-    # Count total words
     words = re.findall(r"\b[a-zA-Z']+\b", text.lower())
     total_words = len(words)
     
-    # Count sentences
     sentence_count = count_sentences(text)
     
-    # Edge case: no sentences or only 1 (empty string edge case returns 1)
-    # We need at least 1 real sentence to calculate average
     if sentence_count <= 0:
         return 0.0
     
-    # Calculate average words per sentence
     average = total_words / sentence_count
     
     return float(average)
+# =======================================================
+
+
+# ==================== EXTRA FEATURE 8 ====================
+def count_characters(text):
+    """
+    EXTRA FEATURE: Counts characters with and without spaces.
+    
+    Args:
+        text (str): The string to analyze.
+    
+    Returns:
+        tuple: (characters_with_spaces, characters_without_spaces)
+               Returns (0, 0) if text is empty.
+    """
+    # Edge case: empty string
+    if not text:
+        return 0, 0
+    
+    # Total characters including spaces and newlines
+    with_spaces = len(text)
+    
+    # Characters excluding spaces, tabs, and newlines
+    without_spaces = len(text.replace(" ", "").replace("\t", "").replace("\n", ""))
+    
+    return with_spaces, without_spaces
 # =======================================================
 
 
@@ -471,6 +496,12 @@ def display_full_analysis(text):
     sentence_avg = calculate_sentence_average_length(text)
     print(f"\n[EXTRA 7] Sentence Complexity:")
     print(f"    Average words per sentence: {sentence_avg:.2f}")
+    
+    # EXTRA FEATURE 8: Character count
+    char_with, char_without = count_characters(text)
+    print(f"\n[EXTRA 8] Character Count:")
+    print(f"    Characters (with spaces): {char_with}")
+    print(f"    Characters (without spaces): {char_without}")
     
     print("\n" + "=" * 50)
 
