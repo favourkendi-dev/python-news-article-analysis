@@ -15,6 +15,7 @@ This script performs various text analysis tasks on a given news article:
 - Keyword density percentage (EXTRA FEATURE 6)
 - Sentence average length (EXTRA FEATURE 7)
 - Character count with/without spaces (EXTRA FEATURE 8)
+- Character frequency analysis (EXTRA FEATURE 9)
 - Calculate average word length
 - Count paragraphs
 - Count sentences
@@ -223,6 +224,7 @@ def export_analysis_to_file(text, filename="analysis_results.txt"):
         sentences = count_sentences(text)
         avg_sentence_length = calculate_sentence_average_length(text)
         char_with_spaces, char_without_spaces = count_characters(text)
+        top_chars = get_top_characters(text)
         
         report_lines = []
         report_lines.append("=" * 60)
@@ -257,6 +259,11 @@ def export_analysis_to_file(text, filename="analysis_results.txt"):
         report_lines.append("")
         report_lines.append(f"Characters (with spaces): {char_with_spaces}")
         report_lines.append(f"Characters (without spaces): {char_without_spaces}")
+        report_lines.append("")
+        report_lines.append("Top 5 Most Frequent Characters:")
+        if top_chars:
+            for rank, (char, count) in enumerate(top_chars, 1):
+                report_lines.append(f"    {rank}. '{char}' - {count} times")
         report_lines.append("")
         report_lines.append("=" * 60)
         report_lines.append("End of Report")
@@ -341,17 +348,52 @@ def count_characters(text):
         tuple: (characters_with_spaces, characters_without_spaces)
                Returns (0, 0) if text is empty.
     """
-    # Edge case: empty string
     if not text:
         return 0, 0
     
-    # Total characters including spaces and newlines
     with_spaces = len(text)
-    
-    # Characters excluding spaces, tabs, and newlines
     without_spaces = len(text.replace(" ", "").replace("\t", "").replace("\n", ""))
     
     return with_spaces, without_spaces
+# =======================================================
+
+
+# ==================== EXTRA FEATURE 9 ====================
+def get_top_characters(text, top_n=5):
+    """
+    EXTRA FEATURE: Returns the top N most frequent alphabetic characters.
+    
+    Args:
+        text (str): The string to analyze.
+        top_n (int): Number of top characters to return. Default is 5.
+    
+    Returns:
+        list: A list of tuples (character, count) for top N characters.
+              Returns empty list if text is empty.
+    """
+    # Edge case: empty string
+    if not text:
+        return []
+    
+    # Filter only alphabetic characters and convert to lowercase
+    letters = re.findall(r'[a-zA-Z]', text.lower())
+    
+    # Edge case: no letters found
+    if not letters:
+        return []
+    
+    # Count character frequencies
+    char_counts = {}
+    for char in letters:
+        if char in char_counts:
+            char_counts[char] += 1
+        else:
+            char_counts[char] = 1
+    
+    # Sort by frequency (highest first), then alphabetically
+    sorted_chars = sorted(char_counts.items(), key=lambda x: (-x[1], x[0]))
+    
+    return sorted_chars[:top_n]
 # =======================================================
 
 
@@ -502,6 +544,15 @@ def display_full_analysis(text):
     print(f"\n[EXTRA 8] Character Count:")
     print(f"    Characters (with spaces): {char_with}")
     print(f"    Characters (without spaces): {char_without}")
+    
+    # EXTRA FEATURE 9: Character frequency
+    top_chars = get_top_characters(text)
+    print(f"\n[EXTRA 9] Character Frequency (Top 5 Letters):")
+    if top_chars:
+        for rank, (char, count) in enumerate(top_chars, 1):
+            print(f"    {rank}. '{char.upper()}' - {count} times")
+    else:
+        print("    No characters found.")
     
     print("\n" + "=" * 50)
 
