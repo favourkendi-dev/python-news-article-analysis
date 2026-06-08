@@ -46,7 +46,6 @@ def identify_most_common_word(text):
         return None
     
     # Regex: find all words (letters and apostrophes), convert to lowercase
-    # \b[a-zA-Z']+\b matches words with letters and apostrophes
     words = re.findall(r"\b[a-zA-Z']+\b", text.lower())
     
     # Edge case: no words found
@@ -69,6 +68,39 @@ def identify_most_common_word(text):
     return most_common
 
 
+def calculate_average_word_length(text):
+    """
+    Calculates the average length of words in the text.
+    Excludes punctuation marks and special characters.
+    
+    Args:
+        text (str): The string to analyze.
+    
+    Returns:
+        float: The average word length. Returns 0 if text is empty.
+    """
+    # Edge case: empty string
+    if not text:
+        return 0
+    
+    # Regex: extract only words (letters and apostrophes), strip punctuation
+    words = re.findall(r"\b[a-zA-Z']+\b", text)
+    
+    # Edge case: no words found
+    if not words:
+        return 0
+    
+    # Calculate total length of all words
+    total_length = 0
+    for word in words:
+        total_length += len(word)
+    
+    # Calculate average
+    average = total_length / len(words)
+    
+    return float(average)
+
+
 def main():
     # Read the news article file
     with open("news_article.txt", "r", encoding="utf-8") as file:
@@ -89,10 +121,13 @@ def main():
     most_common = identify_most_common_word(article_text)
     print(f"\n[2] Most Common Word:")
     print(f"    The most common word is: '{most_common}'")
+    print(f"    Edge case (empty string): {identify_most_common_word('')}")
     
-    # Test edge case: empty string
-    empty_test = identify_most_common_word("")
-    print(f"    Edge case (empty string): {empty_test}")
+    # Test calculate_average_word_length
+    avg_length = calculate_average_word_length(article_text)
+    print(f"\n[3] Average Word Length:")
+    print(f"    The average word length is: {avg_length:.2f}")
+    print(f"    Edge case (empty string): {calculate_average_word_length('')}")
 
 
 # Run the main function
