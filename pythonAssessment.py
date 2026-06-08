@@ -11,6 +11,7 @@ This script performs various text analysis tasks on a given news article:
 - Unique word count (EXTRA FEATURE 2)
 - Reading time estimate (EXTRA FEATURE 3)
 - Longest and shortest words (EXTRA FEATURE 4)
+- Export results to file (EXTRA FEATURE 5)
 - Calculate average word length
 - Count paragraphs
 - Count sentences
@@ -19,6 +20,7 @@ Developed as part of NLP text analysis coursework.
 """
 
 import re
+from datetime import datetime
 
 
 def count_specific_word(text, word):
@@ -177,27 +179,90 @@ def find_extreme_words(text):
     Returns:
         tuple: (longest_word, shortest_word) or (None, None) if empty.
     """
-    # Edge case: empty string
     if not text:
         return None, None
     
-    # Extract words
     words = re.findall(r"\b[a-zA-Z']+\b", text.lower())
     
-    # Edge case: no words found
     if not words:
         return None, None
     
-    # Remove duplicates for cleaner output (optional - shows unique extremes)
     unique_words = list(set(words))
     
-    # Find longest word
     longest = max(unique_words, key=len)
-    
-    # Find shortest word (if tie, max() returns first encountered)
     shortest = min(unique_words, key=len)
     
     return longest, shortest
+# =======================================================
+
+
+# ==================== EXTRA FEATURE 5 ====================
+def export_analysis_to_file(text, filename="analysis_results.txt"):
+    """
+    EXTRA FEATURE: Exports full analysis results to a text file.
+    
+    Args:
+        text (str): The article text to analyze.
+        filename (str): Output filename. Default is "analysis_results.txt".
+    
+    Returns:
+        bool: True if export successful, False otherwise.
+    """
+    try:
+        # Gather all analysis data
+        most_common = identify_most_common_word(text)
+        top_5 = get_top_5_words(text)
+        unique_count = count_unique_words(text)
+        total_words = len(re.findall(r"\b[a-zA-Z']+\b", text.lower()))
+        reading_time = estimate_reading_time(text)
+        longest, shortest = find_extreme_words(text)
+        avg_length = calculate_average_word_length(text)
+        paragraphs = count_paragraphs(text)
+        sentences = count_sentences(text)
+        
+        # Build report content
+        report_lines = []
+        report_lines.append("=" * 60)
+        report_lines.append("NEWS ARTICLE ANALYSIS REPORT")
+        report_lines.append(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        report_lines.append("=" * 60)
+        report_lines.append("")
+        report_lines.append("[RUBRIC REQUIREMENTS]")
+        report_lines.append(f"Most Common Word: '{most_common}'")
+        report_lines.append(f"Average Word Length: {avg_length:.2f} characters")
+        report_lines.append(f"Paragraph Count: {paragraphs}")
+        report_lines.append(f"Sentence Count: {sentences}")
+        report_lines.append("")
+        report_lines.append("[EXTRA FEATURES]")
+        report_lines.append("Top 5 Most Common Words:")
+        if top_5:
+            for rank, (word, count) in enumerate(top_5, 1):
+                report_lines.append(f"    {rank}. '{word}' - {count} times")
+        else:
+            report_lines.append("    No words found.")
+        report_lines.append("")
+        report_lines.append(f"Unique Words: {unique_count}")
+        report_lines.append(f"Total Words: {total_words}")
+        report_lines.append(f"Vocabulary Diversity: {(unique_count/total_words)*100:.1f}%")
+        report_lines.append("")
+        report_lines.append(f"Reading Time Estimate: {reading_time}")
+        report_lines.append("")
+        report_lines.append(f"Longest Word: '{longest}' ({len(longest)} characters)")
+        report_lines.append(f"Shortest Word: '{shortest}' ({len(shortest)} characters)")
+        report_lines.append("")
+        report_lines.append("=" * 60)
+        report_lines.append("End of Report")
+        report_lines.append("=" * 60)
+        
+        # Write to file
+        with open(filename, "w", encoding="utf-8") as file:
+            file.write("\n".join(report_lines))
+        
+        return True
+        
+    except Exception as e:
+        print(f"Error exporting analysis: {e}")
+        return False
 # =======================================================
 
 
@@ -365,10 +430,11 @@ def main():
         print("MENU OPTIONS:")
         print("  1. Search for a specific word")
         print("  2. View full article analysis")
-        print("  3. Exit")
+        print("  3. Export analysis to file")
+        print("  4. Exit")
         print("-" * 50)
         
-        choice = input("Enter your choice (1, 2, or 3): ").strip()
+        choice = input("Enter your choice (1, 2, 3, or 4): ").strip()
         
         if choice == "1":
             search_word = input("\nEnter the word you want to count: ").strip()
@@ -383,11 +449,19 @@ def main():
             display_full_analysis(article_text)
             
         elif choice == "3":
+            # EXTRA FEATURE 5: Export to file
+            success = export_analysis_to_file(article_text)
+            if success:
+                print("\nAnalysis exported successfully to 'analysis_results.txt'!")
+            else:
+                print("\nFailed to export analysis. Please try again.")
+            
+        elif choice == "4":
             print("\nThank you for using News Article Analyzer. Goodbye!")
             keep_running = False
             
         else:
-            print("\nInvalid choice. Please enter 1, 2, or 3.")
+            print("\nInvalid choice. Please enter 1, 2, 3, or 4.")
 
 
 if __name__ == "__main__":
