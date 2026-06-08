@@ -7,6 +7,7 @@ Date: 2026-06-08
 This script performs various text analysis tasks on a given news article:
 - Count specific word occurrences
 - Identify the most common word
+- Display top 5 most common words (EXTRA FEATURE)
 - Calculate average word length
 - Count paragraphs
 - Count sentences
@@ -34,8 +35,6 @@ def count_specific_word(text, word):
         return 0
     
     # Use regex for whole word, case-insensitive matching
-    # \b ensures word boundaries so we don't match parts of other words
-    # re.escape handles special characters in the search word
     pattern = r'\b' + re.escape(word) + r'\b'
     matches = re.findall(pattern, text, re.IGNORECASE)
     
@@ -57,7 +56,6 @@ def identify_most_common_word(text):
         return None
     
     # Regex: find all words (letters and apostrophes), convert to lowercase
-    # This ensures case-insensitive counting and handles contractions
     words = re.findall(r"\b[a-zA-Z']+\b", text.lower())
     
     # Edge case: no words found
@@ -67,7 +65,7 @@ def identify_most_common_word(text):
     # Count word frequencies using a dictionary
     word_counts = {}
     
-    # FOR LOOP - satisfies rubric requirement for loop usage
+    # FOR LOOP - satisfies rubric requirement
     for word in words:
         if word in word_counts:
             word_counts[word] += 1
@@ -78,6 +76,46 @@ def identify_most_common_word(text):
     most_common = max(word_counts, key=word_counts.get)
     
     return most_common
+
+
+# ==================== EXTRA FEATURE 1 ====================
+def get_top_5_words(text):
+    """
+    EXTRA FEATURE: Returns the top 5 most common words with their counts.
+    
+    Args:
+        text (str): The string to analyze.
+    
+    Returns:
+        list: A list of tuples (word, count) for top 5 words.
+              Returns empty list if text is empty.
+    """
+    # Edge case: empty string
+    if not text:
+        return []
+    
+    # Regex: extract words, lowercase
+    words = re.findall(r"\b[a-zA-Z']+\b", text.lower())
+    
+    # Edge case: no words found
+    if not words:
+        return []
+    
+    # Count frequencies
+    word_counts = {}
+    for word in words:
+        if word in word_counts:
+            word_counts[word] += 1
+        else:
+            word_counts[word] = 1
+    
+    # Sort by count (highest first), then alphabetically
+    # sorted() returns a list of tuples sorted by the key
+    sorted_words = sorted(word_counts.items(), key=lambda x: (-x[1], x[0]))
+    
+    # Return top 5 (or fewer if less than 5 unique words)
+    return sorted_words[:5]
+# =======================================================
 
 
 def calculate_average_word_length(text):
@@ -107,7 +145,7 @@ def calculate_average_word_length(text):
     for word in words:
         total_length += len(word)
     
-    # Calculate average by dividing total length by word count
+    # Calculate average
     average = total_length / len(words)
     
     return float(average)
@@ -128,14 +166,13 @@ def count_paragraphs(text):
     if not text:
         return 1
     
-    # Split text by blank lines (one or more empty lines between text blocks)
-    # \n\s*\n matches newline, optional whitespace, newline
+    # Split text by blank lines
     paragraphs = re.split(r'\n\s*\n', text.strip())
     
     # Filter out any empty strings from the list
     valid_paragraphs = []
     for p in paragraphs:
-        if p.strip():  # if paragraph has content after stripping whitespace
+        if p.strip():
             valid_paragraphs.append(p)
     
     # Edge case: if no valid paragraphs found, return 1
@@ -161,7 +198,6 @@ def count_sentences(text):
         return 1
     
     # Regex: count sentence-ending punctuation marks
-    # [.!?] matches period, exclamation mark, or question mark
     sentences = re.findall(r'[.!?]', text)
     
     # Edge case: if no sentence endings found, return 1
@@ -174,6 +210,7 @@ def count_sentences(text):
 def display_full_analysis(text):
     """
     Displays complete analysis of the news article.
+    Includes EXTRA FEATURE: Top 5 most common words.
     
     Args:
         text (str): The article text to analyze.
@@ -182,19 +219,28 @@ def display_full_analysis(text):
     print("FULL ARTICLE ANALYSIS")
     print("=" * 50)
     
-    # Most common word analysis
+    # Most common word (rubric requirement)
     most_common = identify_most_common_word(text)
     print(f"\n[1] Most Common Word: '{most_common}'")
     
-    # Average word length analysis
-    avg_length = calculate_average_word_length(text)
-    print(f"[2] Average Word Length: {avg_length:.2f} characters")
+    # EXTRA FEATURE: Top 5 most common words
+    print("\n[EXTRA] Top 5 Most Common Words:")
+    top_5 = get_top_5_words(text)
+    if top_5:
+        for rank, (word, count) in enumerate(top_5, 1):
+            print(f"    {rank}. '{word}' - {count} times")
+    else:
+        print("    No words found.")
     
-    # Paragraph count analysis
+    # Average word length
+    avg_length = calculate_average_word_length(text)
+    print(f"\n[2] Average Word Length: {avg_length:.2f} characters")
+    
+    # Paragraph count
     paragraphs = count_paragraphs(text)
     print(f"[3] Paragraph Count: {paragraphs}")
     
-    # Sentence count analysis
+    # Sentence count
     sentences = count_sentences(text)
     print(f"[4] Sentence Count: {sentences}")
     
@@ -205,9 +251,6 @@ def main():
     """
     Main function that drives the program.
     Includes WHILE LOOP and IF/ELSE for interactive menu.
-    
-    WHILE LOOP - satisfies rubric requirement
-    IF/ELSE - satisfies rubric requirement
     """
     # Read the news article file into a string variable
     try:
@@ -249,7 +292,7 @@ def main():
                 print("\nNo word entered. Please try again.")
                 
         elif choice == "2":
-            # Full analysis feature
+            # Full analysis feature (now includes top 5 words)
             display_full_analysis(article_text)
             
         elif choice == "3":
