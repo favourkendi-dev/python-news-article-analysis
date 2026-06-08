@@ -9,6 +9,7 @@ This script performs various text analysis tasks on a given news article:
 - Identify the most common word
 - Display top 5 most common words (EXTRA FEATURE 1)
 - Unique word count (EXTRA FEATURE 2)
+- Reading time estimate (EXTRA FEATURE 3)
 - Calculate average word length
 - Count paragraphs
 - Count sentences
@@ -17,6 +18,7 @@ Developed as part of NLP text analysis coursework.
 """
 
 import re
+import math
 
 
 def count_specific_word(text, word):
@@ -114,21 +116,60 @@ def count_unique_words(text):
     Returns:
         int: The number of unique words. Returns 0 if text is empty.
     """
-    # Edge case: empty string
     if not text:
         return 0
     
-    # Extract words, lowercase for case-insensitive uniqueness
     words = re.findall(r"\b[a-zA-Z']+\b", text.lower())
     
-    # Edge case: no words found
     if not words:
         return 0
     
-    # Use set to get unique words (sets automatically remove duplicates)
     unique_words = set(words)
     
     return len(unique_words)
+# =======================================================
+
+
+# ==================== EXTRA FEATURE 3 ====================
+def estimate_reading_time(text, wpm=200):
+    """
+    EXTRA FEATURE: Estimates reading time based on word count.
+    Average adult reading speed: 200-250 WPM.
+    
+    Args:
+        text (str): The string to analyze.
+        wpm (int): Words per minute reading speed. Default is 200.
+    
+    Returns:
+        str: Formatted reading time (e.g., "2 minutes 30 seconds").
+             Returns "0 seconds" if text is empty.
+    """
+    # Edge case: empty string
+    if not text:
+        return "0 seconds"
+    
+    # Count total words
+    words = re.findall(r"\b[a-zA-Z']+\b", text.lower())
+    total_words = len(words)
+    
+    # Edge case: no words found
+    if total_words == 0:
+        return "0 seconds"
+    
+    # Calculate time in minutes
+    minutes = total_words / wpm
+    
+    # Convert to minutes and seconds for display
+    full_minutes = int(minutes)
+    seconds = int((minutes - full_minutes) * 60)
+    
+    # Format output string
+    if full_minutes == 0:
+        return f"{seconds} seconds"
+    elif seconds == 0:
+        return f"{full_minutes} minute{'s' if full_minutes != 1 else ''}"
+    else:
+        return f"{full_minutes} minute{'s' if full_minutes != 1 else ''} {seconds} seconds"
 # =======================================================
 
 
@@ -241,6 +282,12 @@ def display_full_analysis(text):
     print(f"    Unique words: {unique_count}")
     print(f"    Total words: {total_words}")
     print(f"    Vocabulary diversity: {(unique_count/total_words)*100:.1f}%")
+    
+    # EXTRA FEATURE 3: Reading time estimate
+    reading_time = estimate_reading_time(text)
+    print(f"\n[EXTRA 3] Reading Time Estimate:")
+    print(f"    Estimated reading time: {reading_time}")
+    print(f"    (Based on 200 words per minute average)")
     
     # Average word length
     avg_length = calculate_average_word_length(text)
