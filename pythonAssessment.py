@@ -10,6 +10,7 @@ This script performs various text analysis tasks on a given news article:
 - Display top 5 most common words (EXTRA FEATURE 1)
 - Unique word count (EXTRA FEATURE 2)
 - Reading time estimate (EXTRA FEATURE 3)
+- Longest and shortest words (EXTRA FEATURE 4)
 - Calculate average word length
 - Count paragraphs
 - Count sentences
@@ -18,7 +19,6 @@ Developed as part of NLP text analysis coursework.
 """
 
 import re
-import math
 
 
 def count_specific_word(text, word):
@@ -144,32 +144,60 @@ def estimate_reading_time(text, wpm=200):
         str: Formatted reading time (e.g., "2 minutes 30 seconds").
              Returns "0 seconds" if text is empty.
     """
-    # Edge case: empty string
     if not text:
         return "0 seconds"
     
-    # Count total words
     words = re.findall(r"\b[a-zA-Z']+\b", text.lower())
     total_words = len(words)
     
-    # Edge case: no words found
     if total_words == 0:
         return "0 seconds"
     
-    # Calculate time in minutes
     minutes = total_words / wpm
-    
-    # Convert to minutes and seconds for display
     full_minutes = int(minutes)
     seconds = int((minutes - full_minutes) * 60)
     
-    # Format output string
     if full_minutes == 0:
         return f"{seconds} seconds"
     elif seconds == 0:
         return f"{full_minutes} minute{'s' if full_minutes != 1 else ''}"
     else:
         return f"{full_minutes} minute{'s' if full_minutes != 1 else ''} {seconds} seconds"
+# =======================================================
+
+
+# ==================== EXTRA FEATURE 4 ====================
+def find_extreme_words(text):
+    """
+    EXTRA FEATURE: Finds the longest and shortest words in the text.
+    
+    Args:
+        text (str): The string to analyze.
+    
+    Returns:
+        tuple: (longest_word, shortest_word) or (None, None) if empty.
+    """
+    # Edge case: empty string
+    if not text:
+        return None, None
+    
+    # Extract words
+    words = re.findall(r"\b[a-zA-Z']+\b", text.lower())
+    
+    # Edge case: no words found
+    if not words:
+        return None, None
+    
+    # Remove duplicates for cleaner output (optional - shows unique extremes)
+    unique_words = list(set(words))
+    
+    # Find longest word
+    longest = max(unique_words, key=len)
+    
+    # Find shortest word (if tie, max() returns first encountered)
+    shortest = min(unique_words, key=len)
+    
+    return longest, shortest
 # =======================================================
 
 
@@ -288,6 +316,15 @@ def display_full_analysis(text):
     print(f"\n[EXTRA 3] Reading Time Estimate:")
     print(f"    Estimated reading time: {reading_time}")
     print(f"    (Based on 200 words per minute average)")
+    
+    # EXTRA FEATURE 4: Longest and shortest words
+    longest, shortest = find_extreme_words(text)
+    print(f"\n[EXTRA 4] Word Extremes:")
+    if longest and shortest:
+        print(f"    Longest word: '{longest}' ({len(longest)} characters)")
+        print(f"    Shortest word: '{shortest}' ({len(shortest)} characters)")
+    else:
+        print("    No words found.")
     
     # Average word length
     avg_length = calculate_average_word_length(text)
