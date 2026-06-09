@@ -1,45 +1,10 @@
-"""
-pythonAssessment.py
-Text analysis tool for news articles.
-Author: [Your Name]
-Date: 2026-06-08
-
-This script performs various text analysis tasks on a given news article:
-- Count specific word occurrences
-- Identify the most common word
-- Display top 5 most common words (EXTRA FEATURE 1)
-- Unique word count (EXTRA FEATURE 2)
-- Reading time estimate (EXTRA FEATURE 3)
-- Longest and shortest words (EXTRA FEATURE 4)
-- Export results to file (EXTRA FEATURE 5)
-- Keyword density percentage (EXTRA FEATURE 6)
-- Sentence average length (EXTRA FEATURE 7)
-- Character count with/without spaces (EXTRA FEATURE 8)
-- Character frequency analysis (EXTRA FEATURE 9)
-- Sentiment word detection (EXTRA FEATURE 10)
-- Calculate average word length
-- Count paragraphs
-- Count sentences
-
-Developed as part of NLP text analysis coursework.
-"""
 
 import re
 from datetime import datetime
 
 
 def count_specific_word(text, word):
-    """
-    Counts the occurrences of a specific word in the text.
-    Whole word match, case-insensitive.
     
-    Args:
-        text (str): The string to search through.
-        word (str): The word to count.
-    
-    Returns:
-        int: The count of the word in the text. Returns 0 if no matches.
-    """
     if not text or not word:
         return 0
     
@@ -50,15 +15,7 @@ def count_specific_word(text, word):
 
 
 def identify_most_common_word(text):
-    """
-    Identifies the most common word in the text using regex tokenization.
     
-    Args:
-        text (str): The string to analyze.
-    
-    Returns:
-        str: The most common word. Returns None if text is empty.
-    """
     if not text:
         return None
     
@@ -79,18 +36,9 @@ def identify_most_common_word(text):
     return most_common
 
 
-# ==================== EXTRA FEATURE 1 ====================
+
 def get_top_5_words(text):
-    """
-    EXTRA FEATURE: Returns the top 5 most common words with their counts.
     
-    Args:
-        text (str): The string to analyze.
-    
-    Returns:
-        list: A list of tuples (word, count) for top 5 words.
-              Returns empty list if text is empty.
-    """
     if not text:
         return []
     
@@ -109,20 +57,11 @@ def get_top_5_words(text):
     sorted_words = sorted(word_counts.items(), key=lambda x: (-x[1], x[0]))
     
     return sorted_words[:5]
-# =======================================================
 
 
-# ==================== EXTRA FEATURE 2 ====================
+
 def count_unique_words(text):
-    """
-    EXTRA FEATURE: Counts the number of unique (distinct) words in the text.
     
-    Args:
-        text (str): The string to analyze.
-    
-    Returns:
-        int: The number of unique words. Returns 0 if text is empty.
-    """
     if not text:
         return 0
     
@@ -134,23 +73,10 @@ def count_unique_words(text):
     unique_words = set(words)
     
     return len(unique_words)
-# =======================================================
 
 
-# ==================== EXTRA FEATURE 3 ====================
 def estimate_reading_time(text, wpm=200):
-    """
-    EXTRA FEATURE: Estimates reading time based on word count.
-    Average adult reading speed: 200-250 WPM.
     
-    Args:
-        text (str): The string to analyze.
-        wpm (int): Words per minute reading speed. Default is 200.
-    
-    Returns:
-        str: Formatted reading time (e.g., "2 minutes 30 seconds").
-             Returns "0 seconds" if text is empty.
-    """
     if not text:
         return "0 seconds"
     
@@ -170,20 +96,11 @@ def estimate_reading_time(text, wpm=200):
         return f"{full_minutes} minute{'s' if full_minutes != 1 else ''}"
     else:
         return f"{full_minutes} minute{'s' if full_minutes != 1 else ''} {seconds} seconds"
-# =======================================================
 
 
-# ==================== EXTRA FEATURE 4 ====================
+
 def find_extreme_words(text):
-    """
-    EXTRA FEATURE: Finds the longest and shortest words in the text.
-    
-    Args:
-        text (str): The string to analyze.
-    
-    Returns:
-        tuple: (longest_word, shortest_word) or (None, None) if empty.
-    """
+   
     if not text:
         return None, None
     
@@ -198,21 +115,12 @@ def find_extreme_words(text):
     shortest = min(unique_words, key=len)
     
     return longest, shortest
-# =======================================================
 
 
-# ==================== EXTRA FEATURE 5 ====================
+
+
 def export_analysis_to_file(text, filename="analysis_results.txt"):
-    """
-    EXTRA FEATURE: Exports full analysis results to a text file.
     
-    Args:
-        text (str): The article text to analyze.
-        filename (str): Output filename. Default is "analysis_results.txt".
-    
-    Returns:
-        bool: True if export successful, False otherwise.
-    """
     try:
         most_common = identify_most_common_word(text)
         top_5 = get_top_5_words(text)
@@ -284,22 +192,10 @@ def export_analysis_to_file(text, filename="analysis_results.txt"):
     except Exception as e:
         print(f"Error exporting analysis: {e}")
         return False
-# =======================================================
 
 
-# ==================== EXTRA FEATURE 6 ====================
 def calculate_keyword_density(text, word):
-    """
-    EXTRA FEATURE: Calculates the keyword density percentage.
-    Shows what percentage of total words the searched word represents.
-    
-    Args:
-        text (str): The string to analyze.
-        word (str): The keyword to calculate density for.
-    
-    Returns:
-        float: Keyword density as a percentage. Returns 0.0 if invalid.
-    """
+   
     if not text or not word:
         return 0.0
     
@@ -312,20 +208,9 @@ def calculate_keyword_density(text, word):
     density = (keyword_count / total_words) * 100
     
     return float(density)
-# =======================================================
 
-
-# ==================== EXTRA FEATURE 7 ====================
 def calculate_sentence_average_length(text):
-    """
-    EXTRA FEATURE: Calculates the average number of words per sentence.
-    
-    Args:
-        text (str): The string to analyze.
-    
-    Returns:
-        float: Average words per sentence. Returns 0.0 if invalid.
-    """
+   
     if not text:
         return 0.0
     
@@ -340,21 +225,9 @@ def calculate_sentence_average_length(text):
     average = total_words / sentence_count
     
     return float(average)
-# =======================================================
 
-
-# ==================== EXTRA FEATURE 8 ====================
 def count_characters(text):
-    """
-    EXTRA FEATURE: Counts characters with and without spaces.
     
-    Args:
-        text (str): The string to analyze.
-    
-    Returns:
-        tuple: (characters_with_spaces, characters_without_spaces)
-               Returns (0, 0) if text is empty.
-    """
     if not text:
         return 0, 0
     
@@ -362,22 +235,9 @@ def count_characters(text):
     without_spaces = len(text.replace(" ", "").replace("\t", "").replace("\n", ""))
     
     return with_spaces, without_spaces
-# =======================================================
 
-
-# ==================== EXTRA FEATURE 9 ====================
 def get_top_characters(text, top_n=5):
-    """
-    EXTRA FEATURE: Returns the top N most frequent alphabetic characters.
-    
-    Args:
-        text (str): The string to analyze.
-        top_n (int): Number of top characters to return. Default is 5.
-    
-    Returns:
-        list: A list of tuples (character, count) for top N characters.
-              Returns empty list if text is empty.
-    """
+   
     if not text:
         return []
     
@@ -396,21 +256,10 @@ def get_top_characters(text, top_n=5):
     sorted_chars = sorted(char_counts.items(), key=lambda x: (-x[1], x[0]))
     
     return sorted_chars[:top_n]
-# =======================================================
 
 
-# ==================== EXTRA FEATURE 10 ====================
 def analyze_sentiment(text):
-    """
-    EXTRA FEATURE: Basic sentiment analysis using positive/negative word lists.
-    Scans text for sentiment keywords and returns a summary.
     
-    Args:
-        text (str): The string to analyze.
-    
-    Returns:
-        dict: Dictionary with positive_count, negative_count, and overall sentiment.
-    """
     # Edge case: empty string
     if not text:
         return {"positive_count": 0, "negative_count": 0, "overall": "Neutral"}
@@ -460,20 +309,11 @@ def analyze_sentiment(text):
         "negative_count": negative_count,
         "overall": overall
     }
-# =======================================================
+
 
 
 def calculate_average_word_length(text):
-    """
-    Calculates the average length of words in the text.
-    Excludes punctuation marks and special characters.
     
-    Args:
-        text (str): The string to analyze.
-    
-    Returns:
-        float: The average word length. Returns 0 if text is empty.
-    """
     if not text:
         return 0
     
@@ -492,16 +332,7 @@ def calculate_average_word_length(text):
 
 
 def count_paragraphs(text):
-    """
-    Counts the number of paragraphs in the text.
-    Paragraphs are defined as blocks of text separated by empty lines.
     
-    Args:
-        text (str): The string to analyze.
-    
-    Returns:
-        int: The number of paragraphs. Returns 1 if text is empty.
-    """
     if not text:
         return 1
     
@@ -519,16 +350,7 @@ def count_paragraphs(text):
 
 
 def count_sentences(text):
-    """
-    Counts the number of sentences in the text.
-    Sentences end with periods, exclamation marks, or question marks.
     
-    Args:
-        text (str): The string to analyze.
-    
-    Returns:
-        int: The number of sentences. Returns 1 if text is empty.
-    """
     if not text:
         return 1
     
@@ -541,22 +363,16 @@ def count_sentences(text):
 
 
 def display_full_analysis(text):
-    """
-    Displays complete analysis of the news article.
-    Includes EXTRA FEATURES.
-    
-    Args:
-        text (str): The article text to analyze.
-    """
+   
     print("\n" + "=" * 50)
     print("FULL ARTICLE ANALYSIS")
     print("=" * 50)
     
-    # Most common word (rubric requirement)
+    # Most common word 
     most_common = identify_most_common_word(text)
     print(f"\n[1] Most Common Word: '{most_common}'")
     
-    # EXTRA FEATURE 1: Top 5 most common words
+    
     print("\n[EXTRA 1] Top 5 Most Common Words:")
     top_5 = get_top_5_words(text)
     if top_5:
@@ -565,7 +381,7 @@ def display_full_analysis(text):
     else:
         print("    No words found.")
     
-    # EXTRA FEATURE 2: Unique word count
+    
     unique_count = count_unique_words(text)
     total_words = len(re.findall(r"\b[a-zA-Z']+\b", text.lower()))
     print(f"\n[EXTRA 2] Vocabulary Richness:")
@@ -573,20 +389,20 @@ def display_full_analysis(text):
     print(f"    Total words: {total_words}")
     print(f"    Vocabulary diversity: {(unique_count/total_words)*100:.1f}%")
     
-    # EXTRA FEATURE 3: Reading time estimate
+    
     reading_time = estimate_reading_time(text)
     print(f"\n[EXTRA 3] Reading Time Estimate:")
     print(f"    Estimated reading time: {reading_time}")
     print(f"    (Based on 200 words per minute average)")
     
-    # EXTRA FEATURE 4: Longest and shortest words
+
     longest, shortest = find_extreme_words(text)
     print(f"\n[EXTRA 4] Word Extremes:")
     if longest and shortest:
         print(f"    Longest word: '{longest}' ({len(longest)} characters)")
         print(f"    Shortest word: '{shortest}' ({len(shortest)} characters)")
     else:
-        print("    No words found.")
+        print(" No words found.")
     
     # Average word length
     avg_length = calculate_average_word_length(text)
@@ -600,18 +416,18 @@ def display_full_analysis(text):
     sentences = count_sentences(text)
     print(f"[4] Sentence Count: {sentences}")
     
-    # EXTRA FEATURE 7: Sentence average length
+    # Sentence average length
     sentence_avg = calculate_sentence_average_length(text)
     print(f"\n[EXTRA 7] Sentence Complexity:")
     print(f"    Average words per sentence: {sentence_avg:.2f}")
     
-    # EXTRA FEATURE 8: Character count
+    # Character count
     char_with, char_without = count_characters(text)
     print(f"\n[EXTRA 8] Character Count:")
     print(f"    Characters (with spaces): {char_with}")
     print(f"    Characters (without spaces): {char_without}")
     
-    # EXTRA FEATURE 9: Character frequency
+    # Character frequency
     top_chars = get_top_characters(text)
     print(f"\n[EXTRA 9] Character Frequency (Top 5 Letters):")
     if top_chars:
@@ -620,7 +436,7 @@ def display_full_analysis(text):
     else:
         print("    No characters found.")
     
-    # EXTRA FEATURE 10: Sentiment analysis
+    # Sentiment analysis
     sentiment = analyze_sentiment(text)
     print(f"\n[EXTRA 10] Sentiment Analysis:")
     print(f"    Positive sentiment words: {sentiment['positive_count']}")
@@ -631,10 +447,7 @@ def display_full_analysis(text):
 
 
 def main():
-    """
-    Main function that drives the program.
-    Includes WHILE LOOP and IF/ELSE for interactive menu.
-    """
+   
     try:
         with open("news_article.txt", "r", encoding="utf-8") as file:
             article_text = file.read()
@@ -689,8 +502,8 @@ def main():
                 count = count_specific_word(article_text, keyword)
                 total = len(re.findall(r"\b[a-zA-Z']+\b", article_text.lower()))
                 print(f"\nKeyword Density Analysis for '{keyword}':")
-                print(f"    Appearances: {count} out of {total} total words")
-                print(f"    Density: {density:.2f}%")
+                print(f"Appearances: {count} out of {total} total words")
+                print(f"Density: {density:.2f}%")
             else:
                 print("\nNo keyword entered. Please try again.")
         
